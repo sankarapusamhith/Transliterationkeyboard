@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<title>Transliteration Keyboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+body,h1 {font-family: Arial, Helvetica, sans-serif, sans-serif}
+body, html {
+  height: 100%;
+  background-color: rgb(56, 54, 54);
+  }
+.bgimg {
+  min-height: 100%;
+  background-position: center;
+  background-size: cover;
+} 
+.w3-display-middle
+{
+  background-color: rgb(10, 9, 9,0.9);
+  opacity: inherit;
+  border-radius: 5%;
+}
+
+div.justified {
+        display: flex;
+        justify-content: center;
+    }
+</style>
+<body>
+  
+  <input type="hidden" id="csrf_token" value='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+<div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+  <div class="w3-display-topleft w3-padding-large w3-xlarge">
+    <!--Lpgo -->
+  </div>
+  <div class="w3-display-middle">
+    <h1 class="w3-jumbo w3-animate-top" style="color: rgb(231, 117, 10);">Transliteration Keyboard </h1>
+    <hr class="w3-border-grey" style="margin:auto;width:20%; ">
+   
+    <p class="w3-large w3-center" style="color: rgb(231, 117, 10);">Select Language : 
+            <select id="lang">
+                {% for l in lang %}
+                  {% if l == langSession %}
+                <option value="{{ l }}" id="{{ l }}" selected="selected">{{ l }}</option>"
+                  {% else %}
+                <option value="{{ l }}" id="{{ l }}">{{ l }}</option>"
+                  {% endif %}
+                {% endfor %}
+
+                   
+                   
+
+                   
+                    </select>
+                    <br></p>
+    <div class="justified">
+
+    <textarea placeholder="Type something here" rows="5" cols="50" list="cars" id="tarea"></textarea>
+    </div>
+    <br>
+    <p class="w3-large w3-center" id="select"></p>
+    <div class="justified">
+    <div id="test1"></div>
+<br>
+
+    <div id="test5"></div>
+</div>
+
+<br>
+   
+  </div>
+
+</div>
+
+
+
+
+
+
+<script>
+        
+        $('#tarea').on('input', function() {
+
+            text = $('#tarea').val();
+            //console.log((text))
+            //console.log(jQuery.type(text))
+
+            var word = text.substr(text.length-1);
+            //console.log(word)
+           // $('#test5').html(text);
+
+
+
+            var lastWord = text.substring(text.lastIndexOf(" ")+1);
+
+            console.log("LAST WORD: "+lastWord)
+
+
+            if(word === " ")
+            {
+              console.log("New Word")
+            }
+            else
+            {
+
+              
+            lang = $("#lang :selected").val();
+    /*        var url="{% url 'predict' %} ";
+            var data={'data' : lastWord,'lang' : lang};
+            console.log(url);
+            function senddata()
+            {
+              $.get(url, function(response){
+        if(response === 'success')
+        { 
+          alert('Yay!');
+        }
+        else{ alert('Error! :('); }
+    });
+            }
+            senddata();
+            */
+            function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+            $.ajax({
+                
+          type : 'POST',
+          url : "{% url 'predict' %} ",
+          data : {'data' : lastWord,'lang' : lang},
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+          success: function(data) {       
+            json=JSON.parse(data);
+            $('#test').html(json[0]);
+            var data = ""
+            for(var i =0;i < json.length;i++)
+            {   
+            var item = json[i];
+            data +=  '<button id='+item+'>'+item+'</button>' 
+         
+            
+            }   
+            $('#test1').html(data);
+
+            if(json[0] == "") 
+            {
+                $('#select').html(" ");
+            }
+            else{
+                $('#select').html("Select from the options");
+            }
+           
+        
+            console.log("Inside AJAX :"+lastWord)
+            lW = lastWord
+
+            // onClick of a option
+
+            $('#test1').click(function( e ){
+            console.log("Inside onClick :"+lW)
+            var v = e.target.id
+            var textarea=$('#tarea'); 
+          
+            textarea.val(text.replace(lW, v+" "))
+            console.log("Clicked "+v)
+
+            $('#select').html(" ");
+          $('#test1').html(" ");
+
+          $('#tarea').focus();
+        
+        });
+
+        // end of onClick
+                   
+        
+            }
+
+            
+        
+        
+        });
+        
+        // end of else
+        
+      }
+
+    
+              
+        
+          });
+        
+        
+        
+        
+        
+        
+        
+        
+        </script>
+
+</body>
+</html>
